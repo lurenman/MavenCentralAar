@@ -1,0 +1,109 @@
+plugins {
+    id 'com.android.library'
+    // 添加maven-publish and signing gradle plugin
+    id 'maven-publish'
+    id 'signing'
+}
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+//task androidSourcesJar(type: Jar) {
+//    classifier = 'sources'
+//    from android.sourceSets.main.java.sourceFiles
+//}
+task generateSorceJar(type: Jar) {
+    //dummy doc
+    group = 'jar'
+    archiveClassifier.set( 'sources')
+    //from "javasource"
+}
+// 生成 javadoc jar
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+//    from javadoc.destinationDir
+}
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            pom {
+                // 库信息
+                name = 'packagelist'// 替换成自己的
+                packaging = 'jar'
+                description = 'A tool about android Key-Value'// 替换成自己的
+                url = 'https://github.com/lurenman/MavenCentralAar'// 替换成自己的
+                // 开放许可证书，可以自己换其他的
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                // 开发者信息
+                developers {
+                    developer {
+                        id = 'lurenman'// 替换成自己的
+                        name = 'lurenman'// 替换成自己的
+                        email = '1464013886@qq.com'// 替换成自己的
+                    }
+                }
+                // scm
+                scm {
+                    connection = 'https://github.com/lurenman/MavenCentralAar.git'// 替换成自己的
+                    developerConnection = 'https://github.com/lurenman/MavenCentralAargit'// 替换成自己的
+                    url = 'https://github.com/lurenman/MavenCentralAar'// 替换成自己的
+                }
+            }
+            // aar包依赖信息
+            groupId "io.github.lurenman"// 替换成自己的
+            artifactId "packagelist"// 替换成自己的
+            artifact generateSorceJar //需要上传的source jar
+            artifact javadocJar
+            artifact "./build/intermediates/aar_main_jar/release/classes.jar"
+            version "1.0"// 替换成自己的
+        }
+    }
+    repositories {
+        maven {
+            url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = "${sonatypeUsername}"
+                password = "${sonatypePassword}"
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.release
+}
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}

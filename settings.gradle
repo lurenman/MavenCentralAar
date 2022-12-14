@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url '/Users/td/.m2/repository' }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url '/Users/td/.m2/repository' }
+    }
+}
+rootProject.name = "MavenCentralAar"
+include ':app'
+include ':sdk-shell'
+include ':sdk-packagelist'
+include ':sdk-readphone'
+include ':sdk-aar'
